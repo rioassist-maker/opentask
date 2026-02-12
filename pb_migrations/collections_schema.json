@@ -1,0 +1,298 @@
+{
+  "id": "es23vfsic2artwl",
+  "created": "2026-02-12 13:28:14.961Z",
+  "updated": "2026-02-12 13:28:54.930Z",
+  "name": "projects",
+  "type": "base",
+  "system": false,
+  "schema": [
+    {
+      "system": false,
+      "id": "projects_name",
+      "name": "name",
+      "type": "text",
+      "required": true,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "projects_slug",
+      "name": "slug",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": true,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "projects_description",
+      "name": "description",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    }
+  ],
+  "indexes": [],
+  "listRule": null,
+  "viewRule": null,
+  "createRule": null,
+  "updateRule": null,
+  "deleteRule": null,
+  "options": {}
+}
+{
+  "id": "s6unrizwt1oxloj",
+  "created": "2026-02-12 13:28:14.983Z",
+  "updated": "2026-02-12 13:28:54.894Z",
+  "name": "tasks",
+  "type": "base",
+  "system": false,
+  "schema": [
+    {
+      "system": false,
+      "id": "tasks_title",
+      "name": "title",
+      "type": "text",
+      "required": true,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_description",
+      "name": "description",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_project",
+      "name": "project",
+      "type": "relation",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "collectionId": "es23vfsic2artwl",
+        "cascadeDelete": false,
+        "minSelect": null,
+        "maxSelect": null,
+        "displayFields": null
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_status",
+      "name": "status",
+      "type": "select",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "maxSelect": 1,
+        "values": [
+          "backlog",
+          "in_progress",
+          "blocked",
+          "done"
+        ]
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_assigned_to",
+      "name": "assigned_to",
+      "type": "select",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "maxSelect": 1,
+        "values": [
+          "human",
+          "pm",
+          "developer",
+          "reviewer",
+          "test-architect",
+          "security-auditor"
+        ]
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_assigned_human",
+      "name": "assigned_human",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_priority",
+      "name": "priority",
+      "type": "select",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "maxSelect": 1,
+        "values": [
+          "low",
+          "medium",
+          "high",
+          "urgent"
+        ]
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_created_by",
+      "name": "created_by",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "tasks_completed_at",
+      "name": "completed_at",
+      "type": "date",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": "",
+        "max": ""
+      }
+    }
+  ],
+  "indexes": [],
+  "listRule": null,
+  "viewRule": null,
+  "createRule": null,
+  "updateRule": null,
+  "deleteRule": null,
+  "options": {}
+}
+{
+  "id": "cezfaeh64i1td6o",
+  "created": "2026-02-12 13:29:06.771Z",
+  "updated": "2026-02-12 13:29:06.771Z",
+  "name": "activity_log",
+  "type": "base",
+  "system": false,
+  "schema": [
+    {
+      "system": false,
+      "id": "activity_task",
+      "name": "task",
+      "type": "relation",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "collectionId": "s6unrizwt1oxloj",
+        "cascadeDelete": false,
+        "minSelect": null,
+        "maxSelect": null,
+        "displayFields": null
+      }
+    },
+    {
+      "system": false,
+      "id": "activity_actor",
+      "name": "actor",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    },
+    {
+      "system": false,
+      "id": "activity_action",
+      "name": "action",
+      "type": "select",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "maxSelect": 1,
+        "values": [
+          "created",
+          "updated",
+          "assigned",
+          "completed",
+          "commented",
+          "status_changed"
+        ]
+      }
+    },
+    {
+      "system": false,
+      "id": "activity_details",
+      "name": "details",
+      "type": "text",
+      "required": false,
+      "presentable": false,
+      "unique": false,
+      "options": {
+        "min": null,
+        "max": null,
+        "pattern": ""
+      }
+    }
+  ],
+  "indexes": [],
+  "listRule": null,
+  "viewRule": null,
+  "createRule": null,
+  "updateRule": null,
+  "deleteRule": null,
+  "options": {}
+}

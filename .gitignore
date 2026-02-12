@@ -1,9 +1,10 @@
-# PocketBase
+# PocketBase data and binaries
 pb_data/
-pb_migrations/
 *.db
 *.db-shm
 *.db-wal
+# Keep migration files
+# pb_migrations/ - intentionally NOT ignored
 
 # Binaries
 pocketbase
