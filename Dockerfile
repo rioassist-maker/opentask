@@ -14,8 +14,8 @@ RUN unzip /tmp/pb.zip -d /pb/ && \
 
 EXPOSE 8080
 
-# Copy migrations to pb_migrations directory
+# Copy migrations
 COPY pb_migrations /pb/pb_migrations
 
-# Start PocketBase with migrations directory
-CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8080", "--migrationsDir=/pb/pb_migrations"]
+# Start PocketBase - copy migrations to data dir first
+CMD sh -c "cp -r /pb/pb_migrations /pb/pb_data/ 2>/dev/null || true && /pb/pocketbase serve --http=0.0.0.0:8080"
