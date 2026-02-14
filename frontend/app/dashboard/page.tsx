@@ -41,13 +41,9 @@ export default function DashboardPage() {
       }
     }
 
-    // Load tasks on mount
+    // Load tasks on mount only
     loadTasks()
-
-    // Auto-refresh every 5 seconds
-    const interval = setInterval(loadTasks, 5000)
-    return () => clearInterval(interval)
-  }, [router])
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">

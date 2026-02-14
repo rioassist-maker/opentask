@@ -38,13 +38,9 @@ export default function ProjectsPage() {
       }
     }
 
-    // Load projects on mount
+    // Load projects on mount only
     loadProjects()
-
-    // Auto-refresh every 5 seconds
-    const interval = setInterval(loadProjects, 5000)
-    return () => clearInterval(interval)
-  }, [router])
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
