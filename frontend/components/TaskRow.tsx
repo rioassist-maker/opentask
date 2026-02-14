@@ -11,8 +11,8 @@ interface TaskRowProps {
 export default function TaskRow({ task }: TaskRowProps) {
   const [expanded, setExpanded] = useState(false)
 
-  const createdByEmail = task.expand?.created_by?.email || 'Unknown'
-  const claimedByEmail = task.expand?.claimed_by?.email || 'Unclaimed'
+  const createdByEmail = task.expand?.created_by?.email || task.expand?.created_by?.username || 'Unknown'
+  const claimedByEmail = task.expand?.claimed_by?.email || task.expand?.claimed_by?.username || 'Unclaimed'
 
   return (
     <>

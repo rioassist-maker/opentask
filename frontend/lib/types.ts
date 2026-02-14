@@ -13,8 +13,8 @@ export interface Task {
   title: string
   description: string
   status: TaskStatus
-  created_by: string
-  claimed_by: string | null
+  created_by?: string
+  claimed_by?: string | null
   created: string
   updated: string
   completed_at: string | null
