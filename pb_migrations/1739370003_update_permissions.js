@@ -28,8 +28,6 @@ migrate((db) => {
   activityCollection.updateRule = null;  // No updates on logs
   activityCollection.deleteRule = null;  // No deletes on logs
   dao.saveCollection(activityCollection);
-
-  return true;
 }, (db) => {
   const dao = new Dao(db);
 
@@ -57,6 +55,4 @@ migrate((db) => {
   activityCollection.updateRule = null;
   activityCollection.deleteRule = null;
   dao.saveCollection(activityCollection);
-
-  return true;
 });
