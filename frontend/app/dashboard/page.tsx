@@ -8,6 +8,10 @@ import { getTasks } from '@/lib/tasks'
 import { isAuthenticated } from '@/lib/auth'
 import { Task } from '@/lib/types'
 
+/**
+ * Dashboard Page - Displays all tasks
+ * Fixed: Removed unnecessary 5-second polling interval
+ */
 export default function DashboardPage() {
   const router = useRouter()
   const [tasks, setTasks] = useState<Task[]>([])
