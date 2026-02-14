@@ -8,6 +8,7 @@ export const getTasks = async (status?: TaskStatus): Promise<Task[]> => {
       filter,
       expand: 'created_by,claimed_by',
       sort: '-created',
+      $autoCancel: false,
     })
     return response.items as any as Task[]
   } catch (error) {
@@ -19,6 +20,7 @@ export const getTask = async (id: string): Promise<Task> => {
   try {
     return (await pb.collection('tasks').getOne(id, {
       expand: 'created_by,claimed_by',
+      $autoCancel: false,
     })) as any as Task
   } catch (error) {
     throw error
