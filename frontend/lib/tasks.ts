@@ -6,7 +6,7 @@ export const getTasks = async (status?: TaskStatus): Promise<Task[]> => {
     const filter = status ? `(status='${status}')` : ''
     const response = await pb.collection('tasks').getList(1, 100, {
       filter,
-      expand: 'created_by,claimed_by',
+      expand: 'created_by,claimed_by,project',
       sort: '-created',
       $autoCancel: false,
     })
@@ -19,7 +19,7 @@ export const getTasks = async (status?: TaskStatus): Promise<Task[]> => {
 export const getTask = async (id: string): Promise<Task> => {
   try {
     return (await pb.collection('tasks').getOne(id, {
-      expand: 'created_by,claimed_by',
+      expand: 'created_by,claimed_by,project',
       $autoCancel: false,
     })) as any as Task
   } catch (error) {
@@ -29,16 +29,21 @@ export const getTask = async (id: string): Promise<Task> => {
 
 export const createTask = async (
   title: string,
-  description: string
+  description: string,
+  project?: string
 ): Promise<Task> => {
   try {
     const user = pb.authStore.model as any
-    return (await pb.collection('tasks').create({
+    const data: any = {
       title,
       description,
       status: 'todo',
       created_by: user.id,
-    })) as any as Task
+    }
+    if (project) {
+      data.project = project
+    }
+    return (await pb.collection('tasks').create(data)) as any as Task
   } catch (error) {
     throw error
   }

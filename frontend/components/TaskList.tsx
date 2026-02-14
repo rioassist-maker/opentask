@@ -26,6 +26,9 @@ export default function TaskList({ tasks }: TaskListProps) {
               Title
             </th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+              Project
+            </th>
+            <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
               Status
             </th>
             <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">

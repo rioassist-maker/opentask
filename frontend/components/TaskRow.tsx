@@ -13,6 +13,7 @@ export default function TaskRow({ task }: TaskRowProps) {
 
   const createdByEmail = task.expand?.created_by?.email || task.expand?.created_by?.username || 'Unknown'
   const claimedByEmail = task.expand?.claimed_by?.email || task.expand?.claimed_by?.username || 'Unclaimed'
+  const projectName = task.expand?.project?.name || '-'
 
   return (
     <>
@@ -22,6 +23,9 @@ export default function TaskRow({ task }: TaskRowProps) {
       >
         <td className="px-6 py-4 text-sm font-medium text-gray-900">
           {task.title}
+        </td>
+        <td className="px-6 py-4 text-sm text-gray-600">
+          {projectName}
         </td>
         <td className="px-6 py-4 text-sm">
           <span
@@ -43,7 +47,7 @@ export default function TaskRow({ task }: TaskRowProps) {
 
       {expanded && (
         <tr className="border-b bg-gray-50">
-          <td colSpan={5} className="px-6 py-4">
+          <td colSpan={6} className="px-6 py-4">
             <div className="space-y-2">
               <h4 className="font-semibold text-gray-900">Description</h4>
               <p className="text-gray-700 whitespace-pre-wrap">

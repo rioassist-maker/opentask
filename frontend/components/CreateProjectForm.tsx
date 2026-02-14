@@ -1,43 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createTask } from '@/lib/tasks'
-import { getProjects } from '@/lib/projects'
-import { Project } from '@/lib/types'
+import { createProject } from '@/lib/projects'
 
-export default function CreateTaskForm() {
+export default function CreateProjectForm() {
   const router = useRouter()
-  const [title, setTitle] = useState('')
+  const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [project, setProject] = useState('')
-  const [projects, setProjects] = useState<Project[]>([])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
-  const [projectsLoading, setProjectsLoading] = useState(true)
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        const data = await getProjects()
-        setProjects(data)
-      } catch (err) {
-        // Silently fail - projects are optional
-        setProjects([])
-      } finally {
-        setProjectsLoading(false)
-      }
-    }
-    loadProjects()
-  }, [])
 
   const validateForm = (): string | null => {
-    if (!title.trim()) {
-      return 'Title is required'
+    if (!name.trim()) {
+      return 'Project name is required'
     }
-    if (title.length > 200) {
-      return 'Title must be 200 characters or less'
+    if (name.length > 200) {
+      return 'Project name must be 200 characters or less'
     }
     if (description.length > 2000) {
       return 'Description must be 2000 characters or less'
@@ -59,19 +39,18 @@ export default function CreateTaskForm() {
     setLoading(true)
 
     try {
-      await createTask(title, description, project || undefined)
-      setSuccess('Task created successfully!')
-      setTitle('')
+      await createProject(name, description)
+      setSuccess('Project created successfully!')
+      setName('')
       setDescription('')
-      setProject('')
       setTimeout(() => {
-        router.push('/dashboard')
+        router.push('/projects')
       }, 500)
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
       } else {
-        setError('Failed to create task')
+        setError('Failed to create project')
       }
     } finally {
       setLoading(false)
@@ -93,21 +72,21 @@ export default function CreateTaskForm() {
       )}
 
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Title <span className="text-red-500">*</span>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          Project Name <span className="text-red-500">*</span>
         </label>
         <input
-          id="title"
+          id="name"
           type="text"
           required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           maxLength={200}
           className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
-          placeholder="Task title"
+          placeholder="Enter project name"
         />
         <p className="mt-1 text-xs text-gray-500">
-          {title.length}/200 characters
+          {name.length}/200 characters
         </p>
       </div>
 
@@ -122,31 +101,11 @@ export default function CreateTaskForm() {
           maxLength={2000}
           rows={4}
           className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
-          placeholder="Task description (optional)"
+          placeholder="Project description (optional)"
         />
         <p className="mt-1 text-xs text-gray-500">
           {description.length}/2000 characters
         </p>
-      </div>
-
-      <div>
-        <label htmlFor="project" className="block text-sm font-medium text-gray-700">
-          Project
-        </label>
-        <select
-          id="project"
-          value={project}
-          onChange={(e) => setProject(e.target.value)}
-          disabled={projectsLoading}
-          className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
-        >
-          <option value="">-- Select a project (optional) --</option>
-          {projects.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
       </div>
 
       <button
@@ -154,7 +113,7 @@ export default function CreateTaskForm() {
         disabled={loading}
         className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition"
       >
-        {loading ? 'Creating...' : 'Create Task'}
+        {loading ? 'Creating...' : 'Create Project'}
       </button>
     </form>
   )

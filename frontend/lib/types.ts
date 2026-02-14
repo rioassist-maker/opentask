@@ -8,11 +8,24 @@ export interface User {
   updated: string
 }
 
+export interface Project {
+  id: string
+  name: string
+  description: string
+  created_by?: string
+  created: string
+  updated: string
+  expand?: {
+    created_by?: User
+  }
+}
+
 export interface Task {
   id: string
   title: string
   description: string
   status: TaskStatus
+  project?: string
   created_by?: string
   claimed_by?: string | null
   created: string
@@ -21,6 +34,7 @@ export interface Task {
   expand?: {
     created_by?: User
     claimed_by?: User
+    project?: Project
   }
 }
 
