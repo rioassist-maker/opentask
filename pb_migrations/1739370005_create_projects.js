@@ -36,6 +36,20 @@ migrate((db) => {
         },
         {
           "system": false,
+          "id": "slug",
+          "name": "slug",
+          "type": "text",
+          "required": false,
+          "presentable": false,
+          "unique": true,
+          "options": {
+            "min": null,
+            "max": null,
+            "pattern": ""
+          }
+        },
+        {
+          "system": false,
           "id": "description",
           "name": "description",
           "type": "text",

@@ -62,6 +62,28 @@ export const updateTaskStatus = async (
   }
 }
 
+export const updateTask = async (
+  id: string,
+  data: {
+    title?: string
+    description?: string
+    status?: TaskStatus
+    project?: string
+  }
+): Promise<Task> => {
+  try {
+    const updateData: any = {}
+    if (data.title !== undefined) updateData.title = data.title
+    if (data.description !== undefined) updateData.description = data.description
+    if (data.status !== undefined) updateData.status = data.status
+    if (data.project !== undefined) updateData.project = data.project || null
+
+    return (await pb.collection('tasks').update(id, updateData)) as any as Task
+  } catch (error) {
+    throw error
+  }
+}
+
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
   return date.toLocaleDateString('en-US', {

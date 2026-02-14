@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Task } from '@/lib/types'
 import { formatDate, getStatusColor } from '@/lib/tasks'
 
@@ -48,16 +49,27 @@ export default function TaskRow({ task }: TaskRowProps) {
       {expanded && (
         <tr className="border-b bg-gray-50">
           <td colSpan={6} className="px-6 py-4">
-            <div className="space-y-2">
-              <h4 className="font-semibold text-gray-900">Description</h4>
-              <p className="text-gray-700 whitespace-pre-wrap">
-                {task.description || 'No description provided'}
-              </p>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-gray-900">Description</h4>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {task.description || 'No description provided'}
+                </p>
+              </div>
               {task.status === 'done' && task.completed_at && (
                 <p className="text-sm text-gray-600">
                   Completed: {formatDate(task.completed_at)}
                 </p>
               )}
+              <div className="flex gap-2 pt-2">
+                <Link
+                  href={`/tasks/${task.id}/edit`}
+                  className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Edit
+                </Link>
+              </div>
             </div>
           </td>
         </tr>
