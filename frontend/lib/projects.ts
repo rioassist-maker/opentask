@@ -56,14 +56,10 @@ export const createProject = async (
 
 export const updateProject = async (
   id: string,
-  name: string,
-  description?: string
+  updates: Partial<Project>
 ): Promise<Project> => {
   try {
-    return (await pb.collection('projects').update(id, {
-      name,
-      description: description || '',
-    })) as any as Project
+    return (await pb.collection('projects').update(id, updates)) as any as Project
   } catch (error) {
     throw error
   }
