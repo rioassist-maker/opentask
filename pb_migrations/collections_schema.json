@@ -120,7 +120,7 @@
       "options": {
         "maxSelect": 1,
         "values": [
-          "backlog",
+          "todo",
           "in_progress",
           "blocked",
           "done"
