@@ -7,6 +7,7 @@ import KanbanBoard from '@/components/KanbanBoard'
 import { getTasks } from '@/lib/tasks'
 import { isAuthenticated } from '@/lib/auth'
 import { Task } from '@/lib/types'
+import { pb } from '@/lib/pocketbase'
 
 /**
  * Dashboard Page - Displays all tasks in Kanban board
@@ -16,24 +17,21 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [authChecked, setAuthChecked] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  // Only run on client-side after hydration
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
-    // Wait for PocketBase to initialize auth from localStorage
-    // Small delay ensures authStore has loaded before checking
-    const timer = setTimeout(() => {
-      if (!isAuthenticated()) {
-        router.push('/')
-        return
-      }
-      setAuthChecked(true)
-    }, 100)
+    if (!isClient) return
 
-    return () => clearTimeout(timer)
-  }, [router])
-
-  useEffect(() => {
-    if (!authChecked) return
+    // Check authentication - pb.authStore should be loaded from localStorage by now
+    if (!isAuthenticated()) {
+      router.push('/')
+      return
+    }
 
     const loadTasks = async () => {
       try {
@@ -53,14 +51,11 @@ export default function DashboardPage() {
     }
 
     loadTasks()
-  }, [authChecked])
+  }, [isClient, router])
 
-  if (!authChecked) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gray-100">
-        <p className="text-gray-500 text-lg">Loading...</p>
-      </div>
-    )
+  // Show nothing until client-side hydration is complete
+  if (!isClient) {
+    return null
   }
 
   return (
