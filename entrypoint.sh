@@ -4,13 +4,20 @@ set -e
 # Railway inyecta PORT; localmente usamos 8080 por defecto
 PORT="${PORT:-8080}"
 
+# Si Railway montó un volumen, usa ese path; si no, /pb/pb_data (ephemeral sin volumen)
+DATA_DIR="${RAILWAY_VOLUME_MOUNT_PATH:-/pb/pb_data}"
+
 echo "🚂 Starting OpenTask (Frontend + Backend on Railway)"
+echo "   Data dir: $DATA_DIR ${RAILWAY_VOLUME_MOUNT_PATH:+[volume]}"
+if [ -z "$RAILWAY_VOLUME_MOUNT_PATH" ]; then
+  echo "   ⚠️  Sin volumen: los datos se pierden en cada deploy. Crea un Volume y monta en /pb/pb_data"
+fi
 
 # Copy migrations to data directory if not already there
-if [ ! -d "/pb/pb_data/pb_migrations" ]; then
-  echo "📦 Copying migrations to persistent volume..."
-  mkdir -p /pb/pb_data
-  cp -r /pb/pb_migrations /pb/pb_data/
+if [ ! -d "$DATA_DIR/pb_migrations" ]; then
+  echo "📦 Copying migrations to data directory..."
+  mkdir -p "$DATA_DIR"
+  cp -r /pb/pb_migrations "$DATA_DIR/"
   echo "✅ Migrations copied"
 fi
 
@@ -29,4 +36,4 @@ echo ""
 
 # Start PocketBase (pb_public se sirve como sitio estático en /)
 cd /pb
-exec ./pocketbase serve --http="0.0.0.0:$PORT" --dir=/pb/pb_data
+exec ./pocketbase serve --http="0.0.0.0:$PORT" --dir="$DATA_DIR"

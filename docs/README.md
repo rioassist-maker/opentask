@@ -120,7 +120,7 @@ Opcional: si quisieras fijar el puerto a 8080, podés añadir `PORT=8080` en Var
 1. **Railway** → New Project → Deploy from GitHub → repo `opentask` (o tu fork).
 2. **Builder:** Dockerfile (auto-detectado). Start: `/pb/entrypoint.sh`. Railway inyecta `PORT`.
 3. **Crítico — volumen para la DB:**  
-   En el servicio → Settings → Volumes → New: mount path **`/pb/pb_data`**. Sin esto la base se borra en cada deploy.
+   Crear un Volume y montarlo en **`/pb/pb_data`** (Settings → Volumes, o Command Palette `⌘K` → "Add Volume" → elegir este servicio y mount path `/pb/pb_data`). Sin esto la base se borra en cada deploy.
 4. Deploy → Generate Domain → esa URL es la de la app completa.
 5. **Admin:** `https://tu-url.railway.app/_/` → crear usuario admin la primera vez.
 6. **Verificar:**  
@@ -145,7 +145,15 @@ Opcional: si quisieras fijar el puerto a 8080, podés añadir `PORT=8080` en Var
 - [ ] Admin creado en `https://tu-url.railway.app/_/`
 - [ ] Probar la app en `/`, login y crear una tarea
 
-**Si la DB se borra en cada deploy** → el volumen no está montado en `/pb/pb_data`. Revisar Settings → Volumes.
+**Si la DB se borra en cada deploy** → el volumen no está montado. Revisar Settings → Volumes.
+
+### Si Railway falla al crear el volumen
+
+- **Desde la UI:** Crear el volumen desde el Command Palette (`⌘K` o `Ctrl+K`) → "Add Volume" → elegir tu servicio → en el servicio, configurar el mount path. Si el campo rechaza `/pb/pb_data`, probar primero `//pb/pb_data` y después editar a `/pb/pb_data`, o probar sin barra inicial según la región/plan.
+- **Desde CLI:** `railway volume create` (con el servicio linkeado) y en la UI del servicio poner mount path `/pb/pb_data`.
+- **Sin volumen:** La app arranca igual; los datos no persisten entre deploys (cada deploy = DB nueva). Sirve para probar. En los logs verás "Sin volumen" y el data dir usado.
+
+El entrypoint usa `RAILWAY_VOLUME_MOUNT_PATH` si Railway lo inyecta; si no, escribe en `/pb/pb_data` (ephemeral).
 
 ---
 
