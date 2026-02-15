@@ -102,7 +102,20 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     if (!over) return
 
     const taskId = active.id as string
-    const newStatus = over.id as TaskStatus
+    let newStatus: TaskStatus | null = null
+
+    // Check if over.id is a valid status (column drop zone)
+    if (COLUMN_ORDER.includes(over.id as TaskStatus)) {
+      newStatus = over.id as TaskStatus
+    } else {
+      // If over.id is a task ID, find which status column it belongs to
+      const overTask = tasks.find(t => t.id === over.id)
+      if (overTask) {
+        newStatus = overTask.status
+      }
+    }
+
+    if (!newStatus) return
 
     const task = tasks.find(t => t.id === taskId)
     if (!task || task.status === newStatus) return
