@@ -75,8 +75,18 @@ export const updateTask = async (
     const updateData: any = {}
     if (data.title !== undefined) updateData.title = data.title
     if (data.description !== undefined) updateData.description = data.description
-    if (data.status !== undefined) updateData.status = data.status
-    if (data.project !== undefined) updateData.project = data.project || null
+    if (data.status !== undefined) {
+      // Validate status is one of the allowed values
+      const validStatuses = ['todo', 'in_progress', 'blocked', 'done']
+      if (!validStatuses.includes(data.status)) {
+        throw new Error(`Invalid status: ${data.status}. Must be one of: ${validStatuses.join(', ')}`)
+      }
+      updateData.status = data.status
+    }
+    // For project field: send empty string to clear (don't send null for relation fields)
+    if (data.project !== undefined) {
+      updateData.project = data.project || ''
+    }
 
     return (await pb.collection('tasks').update(id, updateData)) as any as Task
   } catch (error) {

@@ -43,14 +43,34 @@ export const logout = (): void => {
 }
 
 export const getErrorMessage = (error: unknown): string => {
+  console.error('Auth error:', error)
+  
+  // Handle PocketBase ClientResponseError
+  if (error && typeof error === 'object' && 'data' in error) {
+    const err = error as any
+    if (err.data?.message) {
+      return err.data.message
+    }
+    if (err.message) {
+      return err.message
+    }
+  }
+  
   if (error instanceof Error) {
+    if (error.message.includes('Invalid')) {
+      return 'Invalid email or password'
+    }
     if (error.message.includes('invalid')) {
       return 'Invalid email or password'
     }
     if (error.message.includes('already exists')) {
       return 'Email already registered'
     }
+    if (error.message.includes('Unauthorized') || error.message.includes('unauthorized')) {
+      return 'Invalid email or password'
+    }
     return error.message
   }
-  return 'An error occurred'
+  
+  return 'Something went wrong while processing your request'
 }

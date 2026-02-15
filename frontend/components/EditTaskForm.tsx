@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { updateTask, getTask } from '@/lib/tasks'
 import { getProjects } from '@/lib/projects'
 import { Project, Task, TaskStatus } from '@/lib/types'
+import { getPocketBaseErrorMessage, logDetailedError } from '@/lib/errorHandling'
 
 interface EditTaskFormProps {
   taskId: string
@@ -41,7 +42,9 @@ export default function EditTaskForm({ taskId }: EditTaskFormProps) {
         setProject(taskData.project || '')
         setProjects(projectsData)
       } catch (err) {
-        setError('Failed to load task data')
+        logDetailedError('EditTaskForm.loadData', err)
+        const errorMessage = getPocketBaseErrorMessage(err)
+        setError(`Failed to load task data: ${errorMessage}`)
       } finally {
         setPageLoading(false)
       }
@@ -88,11 +91,9 @@ export default function EditTaskForm({ taskId }: EditTaskFormProps) {
         router.push('/dashboard')
       }, 500)
     } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message)
-      } else {
-        setError('Failed to update task')
-      }
+      logDetailedError('EditTaskForm.handleSubmit', err)
+      const errorMessage = getPocketBaseErrorMessage(err)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

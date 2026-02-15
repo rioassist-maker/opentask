@@ -19,7 +19,12 @@ npm install
 Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_POCKETBASE_URL=https://opentask.fly.dev
+NEXT_PUBLIC_POCKETBASE_URL=http://localhost:8090
+```
+
+Or for production (Railway):
+```env
+NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app
 ```
 
 ### Development
@@ -103,7 +108,7 @@ frontend/
 
 ## API Integration
 
-Frontend communicates with PocketBase backend at `https://opentask.fly.dev/api/`
+Frontend communicates with PocketBase backend at `https://opentask.railway.app/api/` (production) or `http://localhost:8090/api/` (local)
 
 ### Authentication
 
@@ -134,12 +139,15 @@ const task = await createTask('Title', 'Description')
 
 ## Deployment
 
-### Vercel
+### Vercel (Recommended)
 
 1. Push to GitHub
-2. Connect repo in Vercel dashboard
-3. Add environment variable: `NEXT_PUBLIC_POCKETBASE_URL=https://opentask.fly.dev`
-4. Deploy
+2. Connect repo in Vercel dashboard: https://vercel.com/new
+3. Set Root Directory: `frontend`
+4. Add environment variable: `NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app`
+5. Deploy (auto-deploys on main branch)
+
+For detailed deployment steps, see [FLUJO_DEPLOYMENT_COMPLETO.md](../FLUJO_DEPLOYMENT_COMPLETO.md)
 
 ### Other Platforms
 

@@ -4,39 +4,31 @@
 
 ## Stack
 
-- **Backend:** PocketBase (SQLite + Real-time)
-- **Frontend:** Next.js (coming soon)
-- **Deploy:** Fly.io
+- **Backend:** PocketBase (SQLite + Real-time) on Railway.app
+- **Frontend:** Next.js on Vercel
 - **Integration:** OpenClaw skill for agent access
 
 ## Quick Start (Local)
 
 ```bash
-# Run PocketBase
+# Terminal 1: Run PocketBase
 ./pocketbase serve
-
 # Admin UI: http://127.0.0.1:8090/_/
 # API: http://127.0.0.1:8090/api/
+
+# Terminal 2: Run Frontend
+cd frontend && npm run dev
+# Visit: http://localhost:3000
 ```
 
-## Deploy to Fly.io
+## Deploy to Railway + Vercel
 
-```bash
-# Install Fly CLI
-brew install flyctl
+See [FLUJO_DEPLOYMENT_COMPLETO.md](./FLUJO_DEPLOYMENT_COMPLETO.md) for detailed deployment guide.
 
-# Login
-fly auth login
-
-# Create app
-fly launch
-
-# Deploy
-fly deploy
-
-# Open admin
-fly open
-```
+Quick summary:
+- **Backend:** https://railway.app → Deploy from GitHub
+- **Frontend:** https://vercel.com → Deploy from GitHub (root: `frontend/`)
+- **Env Var:** `NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app`
 
 ## Schema
 
