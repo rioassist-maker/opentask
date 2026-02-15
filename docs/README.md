@@ -149,7 +149,7 @@ Opcional: si quisieras fijar el puerto a 8080, podés añadir `PORT=8080` en Var
 
 ### Si Railway falla al crear el volumen
 
-- **Desde la UI:** Crear el volumen desde el Command Palette (`⌘K` o `Ctrl+K`) → "Add Volume" → elegir tu servicio → en el servicio, configurar el mount path. Si el campo rechaza `/pb/pb_data`, probar primero `//pb/pb_data` y después editar a `/pb/pb_data`, o probar sin barra inicial según la región/plan.
+- **Desde la UI:** Crear el volumen desde el Command Palette (`⌘K` o `Ctrl+K`) → "Add Volume" → elegir tu servicio → mount path **`/pb/pb_data`** o **`//pb/pb_data`** (si la UI solo acepta con doble barra, usá `//pb/pb_data`; el entrypoint lo normaliza y funciona igual).
 - **Desde CLI:** `railway volume create` (con el servicio linkeado) y en la UI del servicio poner mount path `/pb/pb_data`.
 - **Sin volumen:** La app arranca igual; los datos no persisten entre deploys (cada deploy = DB nueva). Sirve para probar. En los logs verás "Sin volumen" y el data dir usado.
 

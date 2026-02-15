@@ -6,6 +6,10 @@ PORT="${PORT:-8080}"
 
 # Si Railway montó un volumen, usa ese path; si no, /pb/pb_data (ephemeral sin volumen)
 DATA_DIR="${RAILWAY_VOLUME_MOUNT_PATH:-/pb/pb_data}"
+# Railway a veces solo acepta mount path con doble barra (//pb/pb_data); normalizamos a una
+case "$DATA_DIR" in
+  //*) DATA_DIR="/${DATA_DIR#//}" ;;
+esac
 
 echo "🚂 Starting OpenTask (Frontend + Backend on Railway)"
 echo "   Data dir: $DATA_DIR ${RAILWAY_VOLUME_MOUNT_PATH:+[volume]}"
