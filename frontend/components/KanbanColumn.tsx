@@ -2,8 +2,8 @@
 
 import { Task, TaskStatus } from '@/lib/types'
 import KanbanTaskCard from './KanbanTaskCard'
+import { useDroppable } from '@dnd-kit/core'
 import {
-  useDroppable,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
