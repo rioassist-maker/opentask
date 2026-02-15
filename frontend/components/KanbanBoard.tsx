@@ -106,7 +106,25 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     if (!over) return
 
     const taskId = active.id as string
-    const newStatus = over.id as TaskStatus
+    let newStatus: TaskStatus | undefined
+    const validStatuses: TaskStatus[] = ['todo', 'in_progress', 'blocked', 'done']
+
+    // Extract the new status: over.id could be either a task ID or a column ID (status)
+    if (validStatuses.includes(over.id as TaskStatus)) {
+      // Direct drop on column
+      newStatus = over.id as TaskStatus
+    } else {
+      // Drop on a task - find which column this task belongs to
+      const targetTask = tasks.find(t => t.id === over.id)
+      if (targetTask) {
+        newStatus = targetTask.status
+      }
+    }
+
+    if (!newStatus || !validStatuses.includes(newStatus)) {
+      setError(`Error: Invalid drop target (${over.id}). Please try again.`)
+      return
+    }
 
     const task = tasks.find(t => t.id === taskId)
     if (!task || task.status === newStatus) return
