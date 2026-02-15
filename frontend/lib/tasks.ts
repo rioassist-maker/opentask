@@ -69,6 +69,7 @@ export const updateTask = async (
     description?: string
     status?: TaskStatus
     project?: string
+    priority?: string
   }
 ): Promise<Task> => {
   try {
@@ -86,6 +87,9 @@ export const updateTask = async (
     // For project field: send empty string to clear (don't send null for relation fields)
     if (data.project !== undefined) {
       updateData.project = data.project || ''
+    }
+    if (data.priority !== undefined) {
+      updateData.priority = data.priority
     }
 
     return (await pb.collection('tasks').update(id, updateData)) as any as Task

@@ -10,6 +10,13 @@ interface KanbanTaskCardProps {
   onClick?: (task: Task) => void
 }
 
+const priorityColors: Record<string, string> = {
+  low: 'bg-blue-50 border-blue-200 text-blue-700',
+  medium: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+  high: 'bg-orange-50 border-orange-200 text-orange-700',
+  urgent: 'bg-red-50 border-red-200 text-red-700',
+}
+
 export default function KanbanTaskCard({ task, onClick }: KanbanTaskCardProps) {
   const {
     attributes,
@@ -44,10 +51,21 @@ export default function KanbanTaskCard({ task, onClick }: KanbanTaskCardProps) {
         {task.title}
       </h3>
 
-      <div className="flex items-center justify-between mb-3 gap-2">
-        {task.expand?.project && (
-          <ProjectBadge project={task.expand.project} />
-        )}
+      <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          {task.expand?.project && (
+            <ProjectBadge project={task.expand.project} />
+          )}
+          {task.priority && (
+            <span
+              className={`text-xs px-2 py-1 rounded border ${
+                priorityColors[task.priority] || 'bg-gray-100 text-gray-700'
+              }`}
+            >
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+            </span>
+          )}
+        </div>
         <span className="text-xs text-gray-500 flex-shrink-0">
           #{task.id.slice(0, 8)}
         </span>

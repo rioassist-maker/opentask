@@ -1,6 +1,6 @@
 'use client'
 
-import { Task, TaskStatus } from '@/lib/types'
+import { Task, TaskStatus, TaskPriority } from '@/lib/types'
 import { updateTask } from '@/lib/tasks'
 import ProjectBadge from './ProjectBadge'
 import { useState, useEffect, useRef } from 'react'
@@ -18,12 +18,22 @@ const statuses: { value: TaskStatus; label: string }[] = [
   { value: 'done', label: 'Done' },
 ]
 
+const priorities: { value: TaskPriority; label: string; color: string }[] = [
+  { value: 'low', label: 'Low', color: 'bg-blue-100 text-blue-700' },
+  { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-700' },
+  { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-700' },
+  { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-700' },
+]
+
 export default function TaskDetailPanel({
   task,
   onClose,
   onUpdate,
 }: TaskDetailPanelProps) {
   const [status, setStatus] = useState<TaskStatus>(task.status)
+  const [priority, setPriority] = useState<TaskPriority | string>(
+    task.priority || 'medium'
+  )
   const [title, setTitle] = useState(task.title)
   const [description, setDescription] = useState(task.description)
   const [editingTitle, setEditingTitle] = useState(false)
@@ -82,6 +92,25 @@ export default function TaskDetailPanel({
       setTimeout(() => setSuccess(''), 2000)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update task')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePriorityChange = async (newPriority: TaskPriority | string) => {
+    try {
+      setLoading(true)
+      setError('')
+      setSuccess('')
+
+      const updateData: any = { priority: newPriority }
+      const updatedTask = await updateTask(task.id, updateData)
+      setPriority(newPriority)
+      onUpdate(updatedTask)
+      setSuccess('Priority updated')
+      setTimeout(() => setSuccess(''), 2000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update priority')
     } finally {
       setLoading(false)
     }
@@ -284,6 +313,29 @@ export default function TaskDetailPanel({
               <ProjectBadge project={task.expand.project} />
             </div>
           )}
+
+          {/* Priority */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              Priority
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {priorities.map(p => (
+                <button
+                  key={p.value}
+                  onClick={() => handlePriorityChange(p.value)}
+                  className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                    priority === p.value
+                      ? `${p.color} ring-2 ring-offset-1`
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  } disabled:opacity-50`}
+                  disabled={loading}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Status */}
           <div>

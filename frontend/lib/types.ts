@@ -22,17 +22,22 @@ export interface Project {
   }
 }
 
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
+
 export interface Task {
   id: string
   title: string
   description: string
   status: TaskStatus
+  priority?: TaskPriority | string
   project?: string
   created_by?: string
   claimed_by?: string | null
   created: string
   updated: string
   completed_at: string | null
+  due_date?: string | null
+  tags?: string[] | null
   expand?: {
     created_by?: User
     claimed_by?: User
