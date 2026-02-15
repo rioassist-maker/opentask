@@ -5,7 +5,13 @@ migrate((db) => {
   
   // Add color field if it doesn't exist
   let hasColorField = false;
-  collection.schema.fields.forEach(f => {
+  
+  // Handle both array and non-array fields (different PocketBase versions)
+  const fields = Array.isArray(collection.schema.fields) 
+    ? collection.schema.fields 
+    : [];
+  
+  fields.forEach(f => {
     if (f.name === "color") hasColorField = true;
   });
 
@@ -21,9 +27,9 @@ migrate((db) => {
         max: 7
       }
     }));
+    
+    dao.saveCollection(collection);
   }
-
-  dao.saveCollection(collection);
 
   // Set default colors for existing projects
   const defaults = {
@@ -36,16 +42,18 @@ migrate((db) => {
 
   try {
     const projects = dao.findRecordsByExpr("projects");
-    projects.forEach(p => {
-      const slug = p.get("slug");
-      const currentColor = p.get("color");
-      
-      if (!currentColor) {
-        const defaultColor = defaults[slug] || "#6B7280";
-        p.set("color", defaultColor);
-        dao.saveRecord(p);
-      }
-    });
+    if (projects && Array.isArray(projects)) {
+      projects.forEach(p => {
+        const slug = p.get("slug");
+        const currentColor = p.get("color");
+        
+        if (!currentColor) {
+          const defaultColor = defaults[slug] || "#6B7280";
+          p.set("color", defaultColor);
+          dao.saveRecord(p);
+        }
+      });
+    }
   } catch (e) {
     // No records yet or other error, continue
   }
@@ -55,8 +63,11 @@ migrate((db) => {
   const dao = new Dao(db);
   const collection = dao.findCollectionByNameOrId("projects");
   
-  // Remove color field on rollback
-  const fields = collection.schema.fields.filter(f => f.name !== "color");
+  // Handle both array and non-array fields
+  const fields = Array.isArray(collection.schema.fields) 
+    ? collection.schema.fields.filter(f => f.name !== "color")
+    : [];
+  
   collection.schema.fields = fields;
   
   return dao.saveCollection(collection);
