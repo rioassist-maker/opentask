@@ -1,99 +1,42 @@
 # OpenTask
 
-**Human-Agent Task Board** - Collaborative task management for humans and AI agents.
+**Human-Agent Task Board** — Gestión de tareas colaborativa para humanos y agentes de IA.
 
 ## Stack
 
-- **Backend:** PocketBase (SQLite + Real-time) on Railway.app
-- **Frontend:** Next.js on Vercel
-- **Integration:** OpenClaw skill for agent access
+- **Backend + Frontend:** PocketBase (SQLite + real-time) + Next.js (static), todo en **Railway**
+- **Integración:** Skill OpenClaw para agentes
 
-## Quick Start (Local)
+## Quick start (local)
 
 ```bash
-# Terminal 1: Run PocketBase
+# Terminal 1: PocketBase
 ./pocketbase serve
-# Admin UI: http://127.0.0.1:8090/_/
-# API: http://127.0.0.1:8090/api/
 
-# Terminal 2: Run Frontend
+# Terminal 2: Frontend
 cd frontend && npm run dev
-# Visit: http://localhost:3000
+# http://localhost:3000
 ```
 
-## Deploy to Railway + Vercel
-
-See [FLUJO_DEPLOYMENT_COMPLETO.md](./FLUJO_DEPLOYMENT_COMPLETO.md) for detailed deployment guide.
-
-Quick summary:
-- **Backend:** https://railway.app → Deploy from GitHub
-- **Frontend:** https://vercel.com → Deploy from GitHub (root: `frontend/`)
-- **Env Var:** `NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app`
-
-## Schema
-
-### Collections
-
-**projects**
-- id (text, primary)
-- name (text, required)
-- slug (text, unique)
-- description (text, optional)
-- created (datetime)
-- updated (datetime)
-
-**tasks**
-- id (text, primary)
-- project (relation to projects)
-- title (text, required)
-- description (text, optional)
-- status (select: backlog, in_progress, blocked, done)
-- assigned_to (select: human, pm, developer, reviewer, test-architect, security-auditor)
-- assigned_human (text, optional - name/email)
-- priority (select: low, medium, high, urgent)
-- created_by (text)
-- created (datetime)
-- updated (datetime)
-- completed_at (datetime, optional)
-
-**activity_log**
-- id (text, primary)
-- task (relation to tasks)
-- actor (text - human name or agent id)
-- action (select: created, updated, assigned, completed, commented)
-- details (json)
-- created (datetime)
-
-## API Examples
+## Verificar build
 
 ```bash
-# List tasks
-curl http://localhost:8090/api/collections/tasks/records
-
-# Create task
-curl -X POST http://localhost:8090/api/collections/tasks/records \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Fix bug","status":"backlog","assigned_to":"developer"}'
-
-# Update task
-curl -X PATCH http://localhost:8090/api/collections/tasks/records/RECORD_ID \
-  -H "Content-Type: application/json" \
-  -d '{"status":"in_progress"}'
+./verify-build.sh
 ```
 
-## OpenClaw Integration
+Comprueba que el frontend construye y, si tienes Docker, que la imagen completa (como en Railway) hace build.
 
-```bash
-# Agent reads tasks
-opentask list --agent developer
+## Documentación
 
-# Agent updates task
-opentask update TASK_ID --status in_progress
+**Toda la documentación está en [docs/README.md](./docs/README.md):**
 
-# Agent creates task
-opentask create "Fix web auth" --assign developer --priority high
-```
+- Visión y proyecto
+- Schema y API
+- Deploy (Railway, todo en uno)
+- Setup multi-agente
+- Frontend, Kanban, Projects
+- Troubleshooting
 
 ---
 
-**Status:** MVP in progress
+**Estado:** MVP en uso

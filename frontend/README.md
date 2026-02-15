@@ -139,24 +139,18 @@ const task = await createTask('Title', 'Description')
 
 ## Deployment
 
-### Vercel (Recommended)
+**Producción:** El frontend se despliega junto con el backend en **Railway** usando el Dockerfile de la raíz del repo (build estático → `pb_public`). Una sola URL para la app y la API.
 
-1. Push to GitHub
-2. Connect repo in Vercel dashboard: https://vercel.com/new
-3. Set Root Directory: `frontend`
-4. Add environment variable: `NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app`
-5. Deploy (auto-deploys on main branch)
+Ver [docs/README.md](../docs/README.md) sección **Deploy (Railway)**.
 
-For detailed deployment steps, see [FLUJO_DEPLOYMENT_COMPLETO.md](../FLUJO_DEPLOYMENT_COMPLETO.md)
-
-### Other Platforms
+### Desarrollo local / build standalone
 
 ```bash
 npm run build
 npm start
 ```
 
-Deploy the built `.next` directory to your platform.
+Para servir solo el frontend (p. ej. en otro host), configurar `NEXT_PUBLIC_POCKETBASE_URL` con la URL del backend.
 
 ## Development
 

@@ -63,7 +63,7 @@ export default function TaskRow({ task }: TaskRowProps) {
               )}
               <div className="flex gap-2 pt-2">
                 <Link
-                  href={`/tasks/${task.id}/edit`}
+                  href={`/tasks/edit?id=${task.id}`}
                   className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
                   onClick={(e) => e.stopPropagation()}
                 >

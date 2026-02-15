@@ -30,7 +30,7 @@ COPY pb_migrations /pb/pb_migrations
 COPY --from=frontend-builder /app/frontend/out /pb/pb_public
 
 # Copy entrypoint script
-COPY entrypoint-full.sh /pb/entrypoint.sh
+COPY entrypoint.sh /pb/entrypoint.sh
 RUN chmod +x /pb/entrypoint.sh
 
 # Start PocketBase

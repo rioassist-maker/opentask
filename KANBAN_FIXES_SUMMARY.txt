@@ -113,8 +113,8 @@ Deployment Status:
 - Branch pushed to GitHub: fix/kanban-bugs
 - Pull Request created: #13 on GitHub
 - Ready for: Code review and merge to main
-- Vercel deployment: Auto-triggers on GitHub push
-- Expected: Automatic deployment to frontend-orpin-rho-13.vercel.app/
+- Railway deployment: Auto-triggers on GitHub push to main
+- Expected: Automatic deployment to your Railway app URL
 
 GitHub Links:
 - Repository: https://github.com/rioassist-maker/opentask
@@ -141,11 +141,11 @@ Git & Deployment:
   ✅ Commits pushed to origin
   ✅ Pull request created
   ✅ Ready for code review
-  ✅ Ready for Vercel deployment
+  ✅ Ready for Railway deployment
 
 Pending (requires human action):
   ⏳ Code review on GitHub PR #13
-  ⏳ Visual testing on Vercel deployment
+  ⏳ Visual testing on Railway deployment
   ⏳ Drag & drop functional testing
   ⏳ Task persistence testing
   ⏳ Approval and merge to main
@@ -173,14 +173,14 @@ NEXT STEPS (HANDLED BY MONICA)
    - Check for any edge cases
 
 2. Testing on Deployment
-   - Access: https://frontend-orpin-rho-13.vercel.app/
+   - Access: https://tu-url.railway.app/
    - Test card widths (should be ~340px)
    - Test drag & drop functionality
    - Verify task persistence
 
 3. Merge & Deploy
    - Merge PR to main branch
-   - Monitor Vercel deployment
+   - Monitor Railway deployment
    - Verify production functionality
 
 4. Close Issues

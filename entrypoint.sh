@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Railway inyecta PORT; localmente usamos 8080 por defecto
+PORT="${PORT:-8080}"
+
 echo "🚂 Starting OpenTask (Frontend + Backend on Railway)"
 
 # Copy migrations to data directory if not already there
@@ -18,13 +21,12 @@ else
   echo "⚠️  WARNING: No frontend files found in /pb/pb_public"
 fi
 
-echo "🚀 Launching PocketBase..."
-echo "   - API: http://0.0.0.0:8080/api/"
-echo "   - Admin: http://0.0.0.0:8080/_/"
-echo "   - Frontend: http://0.0.0.0:8080/"
+echo "🚀 Launching PocketBase on port $PORT..."
+echo "   - API: http://0.0.0.0:$PORT/api/"
+echo "   - Admin: http://0.0.0.0:$PORT/_/"
+echo "   - Frontend: http://0.0.0.0:$PORT/"
 echo ""
 
-# Start PocketBase
-# It will automatically serve pb_public as the root static site
+# Start PocketBase (pb_public se sirve como sitio estático en /)
 cd /pb
-exec ./pocketbase serve --http=0.0.0.0:8080 --dir=/pb/pb_data
+exec ./pocketbase serve --http="0.0.0.0:$PORT" --dir=/pb/pb_data
