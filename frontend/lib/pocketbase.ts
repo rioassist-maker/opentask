@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase'
 
-// URL del backend: si está definida la env la usamos (dev local); si no, misma origen (producción).
+// Get backend URL
 function getPbUrl(): string {
   if (typeof window === 'undefined') {
     return process.env.NEXT_PUBLIC_POCKETBASE_URL || 'http://localhost:8090'
@@ -8,20 +8,49 @@ function getPbUrl(): string {
   return process.env.NEXT_PUBLIC_POCKETBASE_URL || window.location.origin
 }
 
-// Instancia creada en el primer uso (así en el navegador se usa la URL correcta, no la del build).
-let _pb: PocketBase | null = null
-function getPb(): PocketBase {
-  if (!_pb) _pb = new PocketBase(getPbUrl())
-  return _pb
+// Singleton instance
+let _pbInstance: PocketBase | null = null
+
+/**
+ * Initialize PocketBase (call this before using pb)
+ * On client-side, this loads auth from localStorage
+ */
+export function initPocketBase(): PocketBase {
+  if (_pbInstance) return _pbInstance
+  
+  _pbInstance = new PocketBase(getPbUrl())
+  
+  // PocketBase automatically loads auth from localStorage when instantiated in browser
+  // The default storage key is 'pocketbase_auth'
+  
+  return _pbInstance
 }
 
-// Proxy para que `pb.collection()`, `pb.authStore`, etc. sigan funcionando igual.
+// Initialize immediately if in browser context
+// This ensures auth is loaded from localStorage as soon as possible
+if (typeof window !== 'undefined') {
+  initPocketBase()
+}
+
+/**
+ * Get PocketBase instance
+ * Initializes on first call if not already initialized
+ */
+export function getPocketBase(): PocketBase {
+  return _pbInstance || initPocketBase()
+}
+
+// Export default instance for convenience
+// This will be initialized when first accessed or immediately in browser
 export const pb = new Proxy({} as PocketBase, {
-  get(_, prop) {
-    return (getPb() as unknown as Record<string | symbol, unknown>)[prop]
+  get(_target, prop) {
+    const instance = getPocketBase()
+    const value = (instance as any)[prop]
+    return typeof value === 'function' ? value.bind(instance) : value
   },
-  set(_, prop, value) {
-    ;(getPb() as unknown as Record<string | symbol, unknown>)[prop] = value
+  set(_target, prop, value) {
+    const instance = getPocketBase()
+    ;(instance as any)[prop] = value
     return true
   },
 })
