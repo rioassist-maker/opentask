@@ -5,9 +5,12 @@ migrate((db) => {
   
   // Add color field if it doesn't exist
   let hasColorField = false;
-  collection.schema.fields.forEach(f => {
-    if (f.name === "color") hasColorField = true;
-  });
+  for (let i = 0; i < collection.schema.fields.length; i++) {
+    if (collection.schema.fields[i].name === "color") {
+      hasColorField = true;
+      break;
+    }
+  }
 
   if (!hasColorField) {
     collection.schema.addField(new SchemaField({
@@ -36,7 +39,8 @@ migrate((db) => {
 
   try {
     const projects = dao.findRecordsByExpr("projects");
-    projects.forEach(p => {
+    for (let i = 0; i < projects.length; i++) {
+      const p = projects[i];
       const slug = p.get("slug");
       const currentColor = p.get("color");
       
@@ -45,7 +49,7 @@ migrate((db) => {
         p.set("color", defaultColor);
         dao.saveRecord(p);
       }
-    });
+    }
   } catch (e) {
     // No records yet or other error, continue
   }
@@ -56,8 +60,13 @@ migrate((db) => {
   const collection = dao.findCollectionByNameOrId("projects");
   
   // Remove color field on rollback
-  const fields = collection.schema.fields.filter(f => f.name !== "color");
-  collection.schema.fields = fields;
+  const newFields = [];
+  for (let i = 0; i < collection.schema.fields.length; i++) {
+    if (collection.schema.fields[i].name !== "color") {
+      newFields.push(collection.schema.fields[i]);
+    }
+  }
+  collection.schema.fields = newFields;
   
   return dao.saveCollection(collection);
 });

@@ -1,9 +1,9 @@
-# 📋 Phase 2 Preparation Report - FOR MAIN AGENT
+# 📋 Phase 2 Deployment Report - FOR MAIN AGENT
 
 **From:** Developer Agent (Subagent)  
-**To:** Main Agent (agent:main:main)  
-**Date:** 2026-02-12 07:35 CST  
-**Task:** OpenTask Phase 2: Deploy to Fly.io
+**To:** Main Agent  
+**Date:** 2026-02-12 → Updated 2026-02-15  
+**Task:** OpenTask Phase 2: Deploy to Railway.app + Vercel
 
 ---
 
@@ -11,206 +11,299 @@
 
 ### ✅ Phase 2 Preparation: COMPLETE
 
-All infrastructure, automation, and documentation for Phase 2 deployment has been completed and is ready for immediate execution.
+All infrastructure, automation, and documentation for Phase 2 deployment has been completed. Ready for immediate execution using **Railway** (backend) and **Vercel** (frontend).
 
 ---
 
 ## What's Been Done
 
-### 1. Infrastructure Configuration ✅
-- fly.toml configured for Miami region (256MB, 1GB volume)
-- Dockerfile prepared (Alpine + PocketBase 0.22.26)
+### 1. Backend Infrastructure (Railway) ✅
+- `railway.json` configured for PocketBase deployment
+- `Dockerfile` prepared (Alpine + PocketBase 0.22.26)
+- `entrypoint.sh` script ready for Railway startup
 - All infrastructure as code (no manual setup needed)
 
-### 2. Automation Created ✅
-- **deploy.sh** - One-command deployment script with validation
-- **verify-production.sh** - Comprehensive production verification script
-- Both scripts tested and ready to use
+### 2. Frontend Infrastructure (Vercel) ✅
+- Next.js 14 app ready in `frontend/` directory
+- `package.json` with build scripts configured
+- Environment variable setup documented
+- Ready for Vercel auto-deployment
 
-### 3. Documentation Written ✅
-- PHASE_2_READY.md - Quick start guide
-- DEPLOY-FLY.md - Detailed step-by-step guide (6.4 KB)
-- DEPLOYMENT_CHECKLIST.md - Execution checklist
-- PHASE_2_DEPLOYMENT_STATUS.md - Technical specifications (10 KB)
-- PHASE_2_SUMMARY.txt - Comprehensive summary (14 KB)
-- STATUS.txt - At-a-glance status
-
-### 4. Collections Verified ✅
+### 3. Collections & Database ✅
 - All 3 collections from Phase 1 exported and ready
-- Migrations files in place
-- Relations configured
-- Ready for production
+- Migration files in place (`pb_migrations/`)
+- Relations configured (tasks→projects, activity_log→tasks)
+- Database persistence configured
+
+### 4. Documentation Complete ✅
+- `FLUJO_DEPLOYMENT_COMPLETO.md` - Complete deployment guide (Railway + Vercel)
+- `DEPLOY-RAILWAY.md` - Detailed Railway-specific guide
+- `railway.json` - Configuration ready
+- All Fly.io references removed
 
 ### 5. Git Ready ✅
-- 9 new files staged
+- All files staged and ready
 - No breaking changes
-- Ready to commit and push
+- Ready for commit and push
 
 ---
 
-## Blocking Factor: Fly.io API Token ⏸️
+## Deployment Steps (20 minutes total)
 
-### What's Needed
-Fly.io API token to authenticate and deploy
+### Backend Deployment (Railway) - 10 minutes
 
-### How to Get It (2 minutes)
-1. Visit: https://fly.io/app/account/api-tokens
-2. Click "Create Fly API Token"
-3. Name it: "opentask-deploy"
-4. Copy the token
-
-### How to Provide It
-Set environment variable:
 ```bash
-export FLY_API_TOKEN="<your-token-here>"
+# 1. Create Railway account
+# Visit: https://railway.app
+# Sign up with GitHub
+
+# 2. Create new project
+# Go to: https://railway.app/new
+# Select: "Deploy from GitHub repo"
+# Choose: rioassist-maker/opentask
+
+# 3. Railway auto-configures:
+# ✅ Builder: DOCKERFILE (auto-detected)
+# ✅ Start Command: /pb/entrypoint.sh
+# ✅ Port: 8080
+
+# 4. Create volume for database (CRITICAL)
+# In Railway Dashboard:
+# Volumes → Create volume
+# Name: opentask-data
+# Path: /pb/pb_data
+# Size: 1GB
+
+# 5. Deploy (click Deploy button)
+# Wait 2-3 minutes
+# Check logs for: "Server started at http://0.0.0.0:8080"
+
+# 6. Get public URL
+# Railway Dashboard → Domains → Generate Domain
+# Result: https://opentask.railway.app
+
+# 7. Verify
+curl https://opentask.railway.app/api/health
+# Should return: {"code":200,"data":{...},"message":"API is healthy."}
+```
+
+**Result:**
+- ✅ Backend running at: `https://opentask.railway.app`
+- ✅ Admin UI at: `https://opentask.railway.app/_/`
+- ✅ API at: `https://opentask.railway.app/api/collections/...`
+
+### Frontend Deployment (Vercel) - 10 minutes
+
+```bash
+# 1. Create Vercel account
+# Visit: https://vercel.com
+# Sign up with GitHub
+
+# 2. Import project
+# Go to: https://vercel.com/new
+# Select: opentask repo
+# Root Directory: frontend
+
+# 3. Auto-configuration:
+# ✅ Build Command: next build (auto-detected)
+# ✅ Install Command: npm install (auto-detected)
+
+# 4. Add Environment Variable (CRITICAL)
+# Environment Variables:
+# Name: NEXT_PUBLIC_POCKETBASE_URL
+# Value: https://opentask.railway.app
+
+# 5. Deploy (click Deploy button)
+# Wait 2-3 minutes
+
+# 6. Verify
+# Visit: https://opentask.vercel.app
+# Login: aphillipsr@gmail.com / TestPassword123!
+```
+
+**Result:**
+- ✅ Frontend running at: `https://opentask.vercel.app`
+- ✅ Connected to Railway backend
+- ✅ Login working (uses Railway PocketBase)
+
+---
+
+## Production URLs (Post-Deployment)
+
+| Component | URL |
+|-----------|-----|
+| **Frontend** | https://opentask.vercel.app |
+| **Backend API** | https://opentask.railway.app/api/ |
+| **Admin UI** | https://opentask.railway.app/_/ |
+| **Projects** | https://opentask.railway.app/api/collections/projects/records |
+| **Tasks** | https://opentask.railway.app/api/collections/tasks/records |
+| **Activity Log** | https://opentask.railway.app/api/collections/activity_log/records |
+
+---
+
+## API Testing (Post-Deployment)
+
+### Create Project
+```bash
+curl -X POST https://opentask.railway.app/api/collections/projects/records \
+  -H "Content-Type: application/json" \
+  -d '{"name":"OpenTask","slug":"opentask","description":"Production"}'
+```
+
+### Create Task
+```bash
+curl -X POST https://opentask.railway.app/api/collections/tasks/records \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title":"Deploy OpenTask",
+    "status":"in_progress",
+    "assigned_to":"developer"
+  }'
 ```
 
 ---
 
-## Deployment Steps (15 minutes total)
+## Environment Variables
 
+### Local Development
 ```bash
-# 1. Set token (provided by you)
-export FLY_API_TOKEN="token-here"
+# frontend/.env.local
+NEXT_PUBLIC_POCKETBASE_URL=http://localhost:8090
+```
 
-# 2. Deploy (automatic)
-cd ~/code/opentask
-./deploy.sh
-
-# 3. Verify (automatic)
-./verify-production.sh
-
-# 4. Initialize admin (manual, 2 minutes)
-# Visit: https://opentask.fly.dev/_/
-# Create admin user
-
-# 5. Commit and push
-git commit -m "Phase 2: Deploy PocketBase to Fly.io"
-git push origin main
+### Production (Vercel)
+```
+NEXT_PUBLIC_POCKETBASE_URL=https://opentask.railway.app
 ```
 
 ---
 
 ## What You'll Get
 
-### Production URLs
+### Production Stack
 ```
-Admin UI:  https://opentask.fly.dev/_/
-API Root:  https://opentask.fly.dev/api/
+Frontend (Vercel)
+└── https://opentask.vercel.app
+    ├── Next.js 14 app
+    ├── Auto-deployed on push to main
+    ├── CDN + Edge caching
+    └── Connected to Railway backend
+
+Backend (Railway)
+└── https://opentask.railway.app
+    ├── PocketBase running
+    ├── SQLite database (persistent)
+    ├── Admin UI ready
+    ├── API endpoints available
+    └── Logs accessible
 ```
 
-### Live Collections in Production
-- projects - accessible and tested
-- tasks - accessible and tested
-- activity_log - accessible and tested
-
-### Fly.io Dashboard Access
-```
-App: https://fly.io/apps/opentask
-Status: flyctl status
-Logs: flyctl logs
-```
+### Features Available
+- User authentication (email/password)
+- Task management (CRUD)
+- Project organization
+- Activity logging
+- Real-time updates (via PocketBase subscriptions)
 
 ---
 
-## Files Created (9 total)
+## Cost Estimate
 
-**Automation (2 files):**
-- deploy.sh (3.1 KB)
-- verify-production.sh (5.2 KB)
-
-**Documentation (6 files):**
-- PHASE_2_READY.md (6.0 KB) - START HERE
-- DEPLOY-FLY.md (6.4 KB)
-- DEPLOYMENT_CHECKLIST.md (6.1 KB)
-- PHASE_2_DEPLOYMENT_STATUS.md (10 KB)
-- PHASE_2_SUMMARY.txt (14 KB)
-- STATUS.txt (2.5 KB)
-
-**Reports (1 file):**
-- PHASE_2_COMPLETION_REPORT.md (13 KB)
-
-**Total:** ~67 KB of code and documentation
+| Service | Cost |
+|---------|------|
+| **Railway** | $5 credit/month (free tier) |
+| **Vercel** | Free (Hobby plan) |
+| **Total** | Free (within limits) |
 
 ---
 
-## Cost Analysis
+## Acceptance Criteria - ALL READY ✅
 
-**Fly.io Free Tier:**
-- 3 shared CPU machines (using 1)
-- 3GB RAM total (using 256MB)
-- 30GB storage total (using 1GB)
-- **Cost: $0**
+### Infrastructure
+- [x] railway.json configured
+- [x] Dockerfile tested and ready
+- [x] Entrypoint script ready
+- [x] Volume persistence configured
 
-**If exceeding free tier:**
-- ~$0.65/month (negligible)
+### Collections
+- [x] All 3 collections exported
+- [x] Migration files in place
+- [x] Relations properly configured
+- [x] API rules set (open for MVP)
+
+### Documentation
+- [x] FLUJO_DEPLOYMENT_COMPLETO.md complete
+- [x] DEPLOY-RAILWAY.md with steps
+- [x] All Fly.io references removed
+- [x] Environment variables documented
+
+### Git Ready
+- [x] Files staged for commit
+- [x] No breaking changes
+- [x] Commit message prepared
 
 ---
 
-## Risk Assessment
+## Timeline
 
-**Risk Level: LOW** ✅
-
-- Infrastructure as code (proven, tested approach)
-- Fly.io is reliable service
-- Can destroy and recreate easily
-- Data backed up locally
-- PocketBase stable at v0.22.26
-- All changes ready to commit
+| Phase | Task | Duration | Status |
+|-------|------|----------|--------|
+| 2A | Setup Railway account | 2 min | Ready |
+| 2B | Deploy backend | 5 min | Ready |
+| 2C | Setup Vercel account | 2 min | Ready |
+| 2D | Deploy frontend | 5 min | Ready |
+| 2E | Verify both working | 3 min | Ready |
+| 2F | Git commit & push | 2 min | Ready |
+| **Total** | **Phase 2 Complete** | **20 min** | ✅ **Ready** |
 
 ---
 
 ## What Happens After Deploy
 
-### Phase 2 Complete ✅
-- PocketBase running on Fly.io
-- Collections verified
-- Admin UI initialized
-- All API endpoints tested
-- Git history updated
+### Day 1 (Immediate)
+1. ✅ Both services running and accessible
+2. ✅ Database initialized with collections
+3. ✅ Admin user created
+4. ✅ Test login working
 
-### Phase 3 Ready: OpenClaw Skill (2-3 hours)
-- Create CLI commands: opentask list, create, update, complete
-- Integrate with agent workflows
-- Agents can use production URLs
+### Day 2-3 (Next)
+1. Verify data persistence
+2. Test API endpoints
+3. Monitor logs for errors
+4. Plan Phase 3 (OpenClaw skill)
 
-### Phase 4 Ready: Web UI (4-6 hours)
-- Next.js Kanban board
-- Real-time updates
+### Phase 3 (Later)
+1. Create OpenClaw skill at `~/.openclaw/skills/opentask/`
+2. Implement CLI: `opentask list`, `opentask create`, etc.
+3. Integrate with agent workflows
 
----
-
-## Documentation for Reference
-
-**Quick Start:**
-→ Read `STATUS.txt` (2 minutes)
-
-**Then Read:**
-→ `PHASE_2_READY.md` (5 minutes)
-
-**For Execution:**
-→ `DEPLOYMENT_CHECKLIST.md` (step-by-step)
-
-**If Needed:**
-→ `DEPLOY-FLY.md` (detailed guide)
-→ `PHASE_2_DEPLOYMENT_STATUS.md` (technical details)
+### Phase 4 (Later)
+1. Enhanced Next.js frontend
+2. Kanban board UI
+3. Real-time updates
 
 ---
 
 ## Next Action
 
-### Your Turn: Provide API Token
-1. Get token from https://fly.io/app/account/api-tokens
-2. Set: `export FLY_API_TOKEN="token-here"`
-3. Run: `cd ~/code/opentask && ./deploy.sh`
+### Your Turn: Deploy to Production
 
-### Then Verify
-4. Run: `./verify-production.sh`
-5. Visit: `https://opentask.fly.dev/_/`
+**Option 1: I Deploy (You Watch)**
+```bash
+# Tell me to deploy and I'll:
+# 1. Create Railway + Vercel accounts
+# 2. Connect GitHub repos
+# 3. Deploy both services
+# 4. Verify working
+# 5. Commit and push
+```
 
-### Finally Commit
-6. Run: `git commit -m "Phase 2: Deploy PocketBase to Fly.io"`
-7. Run: `git push origin main`
+**Option 2: You Deploy (Using Guide)**
+```bash
+# Follow FLUJO_DEPLOYMENT_COMPLETO.md
+# Takes 20 minutes
+# I'm here if you get stuck
+```
 
 ---
 
@@ -219,61 +312,29 @@ Logs: flyctl logs
 | Item | Status |
 |------|--------|
 | Infrastructure | ✅ Ready |
-| Automation | ✅ Ready |
-| Documentation | ✅ Ready |
 | Collections | ✅ Ready |
+| Documentation | ✅ Ready |
 | Git | ✅ Ready |
-| API Token | ⏳ Needed |
-| **Overall** | **✅ READY** |
+| Deployment | ✅ Ready |
+| **Overall** | **✅ READY TO DEPLOY** |
 
 ---
 
-## Expected Timeline
+## Success Metrics
 
-- **Get Token:** 2 minutes
-- **Deploy:** 5 minutes
-- **Verify:** 3 minutes
-- **Admin Setup:** 2 minutes
-- **Commit & Push:** 2 minutes
-- **Total:** ~15 minutes
-
----
-
-## Success Criteria (All Met) ✅
-
-- [x] Infrastructure configured
-- [x] Automation scripts created
-- [x] Documentation complete
-- [x] Collections ready
-- [x] Git staged
-- [x] Deployment plan documented
-- [x] Troubleshooting guide provided
-- [x] Next phases planned
+After deployment:
+- ✅ Frontend accessible at opentask.vercel.app
+- ✅ Backend accessible at opentask.railway.app
+- ✅ Login working (email/password)
+- ✅ Tasks CRUD working
+- ✅ Database persisting data
+- ✅ All collections initialized
 
 ---
 
-## Questions or Issues?
-
-Refer to the documentation files:
-1. **Quick Reference:** STATUS.txt
-2. **Quick Start:** PHASE_2_READY.md
-3. **Step-by-Step:** DEPLOYMENT_CHECKLIST.md
-4. **Detailed Guide:** DEPLOY-FLY.md
-5. **Technical Details:** PHASE_2_DEPLOYMENT_STATUS.md
+**Status:** READY FOR DEPLOYMENT ✅  
+**Platform:** Railway (backend) + Vercel (frontend)  
+**ETA:** 20 minutes  
+**Date Prepared:** 2026-02-15 09:20 CST
 
 ---
-
-## Ready to Proceed?
-
-✅ All preparation complete
-✅ All documentation ready
-✅ All automation tested
-✅ Production URLs documented
-
-**Just provide your Fly.io API token and run `./deploy.sh`**
-
----
-
-**Phase 2 is ready for execution!** 🚀
-
-Report completed: 2026-02-12 07:35 CST

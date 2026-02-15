@@ -1,7 +1,7 @@
 /// <reference path="../pb_data/types.d.ts" />
 migrate((db) => {
   const dao = new Dao(db);
-  const collection = dao.findCollectionByNameOrId("s6unrizwt1oxloj");
+  const collection = dao.findCollectionByNameOrId("tasks");
 
   // Update the status field to use 'todo' instead of 'backlog'
   // and remove 'in_review' if present
@@ -18,16 +18,27 @@ migrate((db) => {
     };
   }
 
-  // Update existing records: convert 'backlog' to 'todo'
-  db.exec(`UPDATE tasks SET status = 'todo' WHERE status = 'backlog'`);
-  
-  // Update existing records: remove 'in_review' -> convert to 'todo'
-  db.exec(`UPDATE tasks SET status = 'todo' WHERE status = 'in_review'`);
+  dao.saveCollection(collection);
 
-  return dao.saveCollection(collection);
+  // Update existing records: convert 'backlog' to 'todo' and 'in_review' to 'todo'
+  try {
+    const tasks = dao.findRecordsByExpr("tasks");
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      const status = task.get("status");
+      if (status === "backlog" || status === "in_review") {
+        task.set("status", "todo");
+        dao.saveRecord(task);
+      }
+    }
+  } catch (e) {
+    // No records yet, continue
+  }
+
+  return null;
 }, (db) => {
   const dao = new Dao(db);
-  const collection = dao.findCollectionByNameOrId("s6unrizwt1oxloj");
+  const collection = dao.findCollectionByNameOrId("tasks");
 
   // Rollback: restore original status values
   const statusField = collection.schema.getFieldByName("status");
@@ -43,8 +54,21 @@ migrate((db) => {
     };
   }
 
-  // Restore records: convert 'todo' back to 'backlog'
-  db.exec(`UPDATE tasks SET status = 'backlog' WHERE status = 'todo'`);
+  dao.saveCollection(collection);
 
-  return dao.saveCollection(collection);
+  // Restore records: convert 'todo' back to 'backlog'
+  try {
+    const tasks = dao.findRecordsByExpr("tasks");
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      if (task.get("status") === "todo") {
+        task.set("status", "backlog");
+        dao.saveRecord(task);
+      }
+    }
+  } catch (e) {
+    // No records yet, continue
+  }
+
+  return null;
 });
