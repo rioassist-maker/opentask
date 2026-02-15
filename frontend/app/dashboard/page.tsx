@@ -64,7 +64,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-red-100">
       <Header />
 
       {error && (
