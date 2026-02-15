@@ -70,6 +70,7 @@ export const updateTask = async (
     status?: TaskStatus
     project?: string
     priority?: string
+    mentions?: string[]
   }
 ): Promise<Task> => {
   try {
@@ -90,6 +91,9 @@ export const updateTask = async (
     }
     if (data.priority !== undefined) {
       updateData.priority = data.priority
+    }
+    if (data.mentions !== undefined) {
+      updateData.mentions = data.mentions
     }
 
     return (await pb.collection('tasks').update(id, updateData)) as any as Task
