@@ -1,12 +1,3 @@
-FROM node:18-alpine AS frontend-builder
-
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm ci
-COPY frontend/ ./
-RUN npm run build
-
-# ========================================
 FROM alpine:latest
 
 ARG PB_VERSION=0.22.26
@@ -23,15 +14,10 @@ RUN unzip /tmp/pb.zip -d /pb/ && \
 
 EXPOSE 8080
 
-# Copy migrations
+# Copy migrations and entrypoint script
 COPY pb_migrations /pb/pb_migrations
-
-# Copy built frontend to pb_public (PocketBase serves static files from here)
-COPY --from=frontend-builder /app/frontend/out /pb/pb_public
-
-# Copy entrypoint script
-COPY entrypoint-full.sh /pb/entrypoint.sh
+COPY entrypoint.sh /pb/entrypoint.sh
 RUN chmod +x /pb/entrypoint.sh
 
-# Start PocketBase
+# Start PocketBase via entrypoint
 CMD ["/pb/entrypoint.sh"]
