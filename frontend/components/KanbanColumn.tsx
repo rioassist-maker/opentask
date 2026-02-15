@@ -2,8 +2,8 @@
 
 import { Task, TaskStatus } from '@/lib/types'
 import KanbanTaskCard from './KanbanTaskCard'
+import { useDroppable } from '@dnd-kit/core'
 import {
-  useDroppable,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
@@ -35,7 +35,7 @@ export default function KanbanColumn({
   const config = statusConfig[status]
 
   return (
-    <div className="flex flex-col bg-gray-50 rounded-lg p-4 min-w-[350px] max-h-[calc(100vh-200px)] overflow-hidden">
+    <div className="flex flex-col bg-gray-50 rounded-lg p-4 w-[340px] min-w-[340px] max-w-[340px] max-h-[calc(100vh-200px)] overflow-hidden">
       <div className="mb-4">
         <h2 className="text-lg font-bold text-gray-900 flex items-center justify-between">
           {title}
@@ -47,7 +47,7 @@ export default function KanbanColumn({
 
       <div
         ref={setNodeRef}
-        className={`flex-1 overflow-y-auto space-y-3 ${config.bg} rounded-lg p-3`}
+        className={`flex-1 overflow-y-auto space-y-3 ${config.bg} rounded-lg p-3 w-full`}
       >
         <SortableContext
           items={tasks.map(t => t.id)}
