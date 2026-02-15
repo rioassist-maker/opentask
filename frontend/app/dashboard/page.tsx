@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import KanbanBoard from '@/components/KanbanBoard'
 import { getTasks } from '@/lib/tasks'
 import { isAuthenticated } from '@/lib/auth'
+import { initPocketBase } from '@/lib/pocketbase'
 import { Task } from '@/lib/types'
 
 /**
@@ -16,17 +17,21 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [isClient, setIsClient] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
-  // Only run on client-side after hydration
   useEffect(() => {
-    setIsClient(true)
+    // Ensure PocketBase is initialized and auth is loaded from localStorage
+    initPocketBase()
+    
+    // Mark as mounted (client-side)
+    setMounted(true)
   }, [])
 
   useEffect(() => {
-    if (!isClient) return
+    // Wait for client-side mount
+    if (!mounted) return
 
-    // Check authentication - pb.authStore should be loaded from localStorage by now
+    // Check authentication after PocketBase is initialized
     if (!isAuthenticated()) {
       router.push('/')
       return
@@ -50,10 +55,10 @@ export default function DashboardPage() {
     }
 
     loadTasks()
-  }, [isClient, router])
+  }, [mounted, router])
 
   // Show nothing until client-side hydration is complete
-  if (!isClient) {
+  if (!mounted) {
     return null
   }
 
