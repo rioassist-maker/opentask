@@ -7,7 +7,6 @@ import KanbanBoard from '@/components/KanbanBoard'
 import { getTasks } from '@/lib/tasks'
 import { isAuthenticated } from '@/lib/auth'
 import { Task } from '@/lib/types'
-import { pb } from '@/lib/pocketbase'
 
 /**
  * Dashboard Page - Displays all tasks in Kanban board
