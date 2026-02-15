@@ -20,3 +20,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Mention styling */
+.mention {
+  @apply text-blue-600 font-medium bg-blue-50 px-1 rounded;
+}

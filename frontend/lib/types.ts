@@ -33,6 +33,7 @@ export interface Task {
   project?: string
   created_by?: string
   claimed_by?: string | null
+  mentions?: string[] | null  // Array of user IDs mentioned in task
   created: string
   updated: string
   completed_at: string | null
@@ -42,6 +43,22 @@ export interface Task {
     created_by?: User
     claimed_by?: User
     project?: Project
+  }
+}
+
+export interface Comment {
+  id: string
+  task: string  // Task ID
+  user: string  // User ID
+  content: string  // Markdown content
+  parent?: string | null  // Parent comment ID for threading
+  mentions?: string[] | null  // Array of user IDs mentioned in comment
+  created: string
+  updated: string
+  expand?: {
+    task?: Task
+    user?: User
+    parent?: Comment
   }
 }
 

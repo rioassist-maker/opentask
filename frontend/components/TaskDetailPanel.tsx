@@ -1,8 +1,12 @@
 'use client'
 
-import { Task, TaskStatus, TaskPriority } from '@/lib/types'
+import { Task, TaskStatus, TaskPriority, User } from '@/lib/types'
 import { updateTask } from '@/lib/tasks'
 import ProjectBadge from './ProjectBadge'
+import CommentsSection from './CommentsSection'
+import MentionInput from './MentionInput'
+import { getUsers } from '@/lib/users'
+import { extractMentionedUserIds } from '@/lib/mentions'
 import { useState, useEffect, useRef } from 'react'
 
 interface TaskDetailPanelProps {
@@ -41,9 +45,19 @@ export default function TaskDetailPanel({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [users, setUsers] = useState<User[]>([])
   const modalRef = useRef<HTMLDivElement>(null)
   const titleInputRef = useRef<HTMLInputElement>(null)
   const descriptionTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Fetch users for mentions
+  useEffect(() => {
+    const loadUsers = async () => {
+      const allUsers = await getUsers()
+      setUsers(allUsers)
+    }
+    loadUsers()
+  }, [])
 
   // Handle ESC key
   useEffect(() => {
@@ -152,8 +166,12 @@ export default function TaskDetailPanel({
       setError('')
       setSuccess('')
 
+      // Extract mentions from description
+      const mentions = extractMentionedUserIds(description, users)
+
       const updatedTask = await updateTask(task.id, {
         description: description.trim(),
+        mentions,
       })
       onUpdate(updatedTask)
       setEditingDescription(false)
@@ -261,13 +279,12 @@ export default function TaskDetailPanel({
             </h3>
             {editingDescription ? (
               <div className="space-y-2">
-                <textarea
-                  ref={descriptionTextareaRef}
+                <MentionInput
                   value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  className="w-full border border-blue-500 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px] font-sans"
-                  disabled={loading}
-                  placeholder="Enter task description"
+                  onChange={setDescription}
+                  users={users}
+                  placeholder="Enter task description (Use @ to mention someone)"
+                  rows={4}
                 />
                 <div className="flex gap-2">
                   <button
@@ -432,6 +449,11 @@ export default function TaskDetailPanel({
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Comments Section */}
+          <div className="pt-6 border-t border-gray-200">
+            <CommentsSection taskId={task.id} users={users} />
           </div>
         </div>
       </div>
