@@ -16,13 +16,24 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
-    // Check authentication
-    if (!isAuthenticated()) {
-      router.push('/')
-      return
-    }
+    // Wait for PocketBase to initialize auth from localStorage
+    // Small delay ensures authStore has loaded before checking
+    const timer = setTimeout(() => {
+      if (!isAuthenticated()) {
+        router.push('/')
+        return
+      }
+      setAuthChecked(true)
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [router])
+
+  useEffect(() => {
+    if (!authChecked) return
 
     const loadTasks = async () => {
       try {
@@ -41,9 +52,16 @@ export default function DashboardPage() {
       }
     }
 
-    // Load tasks on mount only
     loadTasks()
-  }, [])
+  }, [authChecked])
+
+  if (!authChecked) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-100">
+        <p className="text-gray-500 text-lg">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gray-100">
