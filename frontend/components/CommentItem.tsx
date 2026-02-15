@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import DOMPurify from 'dompurify'
 import { Comment, User } from '@/lib/types'
 import { updateComment, deleteComment } from '@/lib/comments'
 import { getCurrentUser } from '@/lib/auth'
@@ -77,7 +78,13 @@ export default function CommentItem({
     // Line breaks
     html = html.replace(/\n/g, '<br />')
     
-    return html
+    // Sanitize HTML to prevent XSS attacks
+    const sanitizedHtml = DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: ['strong', 'em', 'code', 'span', 'br'],
+      ALLOWED_ATTR: ['class']
+    })
+    
+    return sanitizedHtml
   }
 
   const formattedDate = new Date(comment.created).toLocaleString()
