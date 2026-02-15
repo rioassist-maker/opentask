@@ -4,6 +4,7 @@ import { Task, TaskStatus } from '@/lib/types'
 import { updateTask } from '@/lib/tasks'
 import ProjectBadge from './ProjectBadge'
 import { useState } from 'react'
+import { getPocketBaseErrorMessage, logDetailedError } from '@/lib/errorHandling'
 
 interface TaskDetailPanelProps {
   task: Task
@@ -36,7 +37,9 @@ export default function TaskDetailPanel({
       setStatus(newStatus)
       onUpdate(updatedTask)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update task')
+      logDetailedError('TaskDetailPanel.handleStatusChange', err)
+      const errorMessage = getPocketBaseErrorMessage(err)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

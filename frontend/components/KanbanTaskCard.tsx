@@ -32,7 +32,6 @@ export default function KanbanTaskCard({ task, onClick }: KanbanTaskCardProps) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
       {...attributes}
       {...listeners}
       className="bg-white rounded-lg shadow-sm border-l-4 p-4 cursor-move hover:shadow-md transition-shadow"

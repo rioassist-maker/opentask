@@ -14,6 +14,7 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Task, TaskStatus, Project } from '@/lib/types'
 import { updateTask, getTasks } from '@/lib/tasks'
 import { getProjects } from '@/lib/projects'
+import { getPocketBaseErrorMessage, logDetailedError } from '@/lib/errorHandling'
 import KanbanColumn from './KanbanColumn'
 import FilterPanel from './FilterPanel'
 import TaskDetailPanel from './TaskDetailPanel'
@@ -125,8 +126,9 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
 
       setError('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update task')
-      console.error('Failed to move task:', err)
+      logDetailedError('KanbanBoard.handleDragEnd', err)
+      const errorMessage = getPocketBaseErrorMessage(err)
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
