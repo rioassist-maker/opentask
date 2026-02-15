@@ -8,40 +8,59 @@ function getPbUrl(): string {
   return process.env.NEXT_PUBLIC_POCKETBASE_URL || window.location.origin
 }
 
-// Singleton instance
+// Track if we've initialized on client-side
 let _pbInstance: PocketBase | null = null
+let _clientInitialized = false
 
 /**
- * Initialize PocketBase (call this before using pb)
- * On client-side, this loads auth from localStorage
+ * Initialize PocketBase instance
+ * On client-side, creates instance that loads auth from localStorage
  */
 export function initPocketBase(): PocketBase {
-  if (_pbInstance) return _pbInstance
+  const isClient = typeof window !== 'undefined'
   
+  // If we already have a client-initialized instance, reuse it
+  if (_pbInstance && _clientInitialized) {
+    return _pbInstance
+  }
+  
+  // If we have an instance but it was created on server, replace it with client instance
+  if (_pbInstance && !_clientInitialized && isClient) {
+    _pbInstance = new PocketBase(getPbUrl())
+    _clientInitialized = true
+    return _pbInstance
+  }
+  
+  // Create new instance
   _pbInstance = new PocketBase(getPbUrl())
   
+  // Mark as client-initialized only if we're actually on client
+  if (isClient) {
+    _clientInitialized = true
+  }
+  
   // PocketBase automatically loads auth from localStorage when instantiated in browser
-  // The default storage key is 'pocketbase_auth'
   
   return _pbInstance
 }
 
-// Initialize immediately if in browser context
-// This ensures auth is loaded from localStorage as soon as possible
-if (typeof window !== 'undefined') {
-  initPocketBase()
-}
-
 /**
- * Get PocketBase instance
- * Initializes on first call if not already initialized
+ * Get PocketBase instance (creates if not exists)
  */
 export function getPocketBase(): PocketBase {
-  return _pbInstance || initPocketBase()
+  if (!_pbInstance) {
+    return initPocketBase()
+  }
+  
+  // If we're on client but instance was created on server, reinitialize
+  if (typeof window !== 'undefined' && !_clientInitialized) {
+    return initPocketBase()
+  }
+  
+  return _pbInstance
 }
 
-// Export default instance for convenience
-// This will be initialized when first accessed or immediately in browser
+// Export singleton instance via Proxy
 export const pb = new Proxy({} as PocketBase, {
   get(_target, prop) {
     const instance = getPocketBase()

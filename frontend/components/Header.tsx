@@ -1,7 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
+import { initPocketBase } from '@/lib/pocketbase'
+import { User } from '@/lib/types'
 
 interface HeaderProps {
   onLogout?: () => void
@@ -9,10 +12,24 @@ interface HeaderProps {
 
 export default function Header({ onLogout }: HeaderProps) {
   const router = useRouter()
-  const user = getCurrentUser()
+  const [user, setUser] = useState<User | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // Initialize PocketBase and load auth from localStorage
+    initPocketBase()
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+    // Only get current user after client-side mount
+    setUser(getCurrentUser())
+  }, [mounted])
 
   const handleLogout = () => {
     logout()
+    setUser(null)
     onLogout?.()
     router.push('/')
   }
