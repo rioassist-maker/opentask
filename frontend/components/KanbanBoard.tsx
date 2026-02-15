@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import {
   DndContext,
   closestCorners,
@@ -41,13 +41,10 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
   const [selectedProjectForSettings, setSelectedProjectForSettings] = useState<
     Project | undefined
   >()
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      distance: 8,
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -130,7 +127,6 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     if (!task || task.status === newStatus) return
 
     try {
-      setLoading(true)
       const updatedTask = await updateTask(taskId, { status: newStatus })
 
       setTasks(prevTasks =>
@@ -147,8 +143,6 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
       logDetailedError('KanbanBoard.handleDragEnd', err)
       const errorMessage = getPocketBaseErrorMessage(err)
       setError(errorMessage)
-    } finally {
-      setLoading(false)
     }
   }
 

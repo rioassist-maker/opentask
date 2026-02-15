@@ -2,7 +2,6 @@
 
 import { Task } from '@/lib/types'
 import ProjectBadge from './ProjectBadge'
-import { useRef } from 'react'
 import { CSS } from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
 
