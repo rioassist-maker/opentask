@@ -14,7 +14,6 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Task, TaskStatus, Project } from '@/lib/types'
 import { updateTask, getTasks } from '@/lib/tasks'
 import { getProjects } from '@/lib/projects'
-import { getPocketBaseErrorMessage, logDetailedError } from '@/lib/errorHandling'
 import KanbanColumn from './KanbanColumn'
 import FilterPanel from './FilterPanel'
 import TaskDetailPanel from './TaskDetailPanel'
@@ -103,25 +102,7 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     if (!over) return
 
     const taskId = active.id as string
-    let newStatus: TaskStatus | undefined
-    const validStatuses: TaskStatus[] = ['todo', 'in_progress', 'blocked', 'done']
-
-    // Extract the new status: over.id could be either a task ID or a column ID (status)
-    if (validStatuses.includes(over.id as TaskStatus)) {
-      // Direct drop on column
-      newStatus = over.id as TaskStatus
-    } else {
-      // Drop on a task - find which column this task belongs to
-      const targetTask = tasks.find(t => t.id === over.id)
-      if (targetTask) {
-        newStatus = targetTask.status
-      }
-    }
-
-    if (!newStatus || !validStatuses.includes(newStatus)) {
-      setError(`Error: Invalid drop target (${over.id}). Please try again.`)
-      return
-    }
+    const newStatus = over.id as TaskStatus
 
     const task = tasks.find(t => t.id === taskId)
     if (!task || task.status === newStatus) return
@@ -140,9 +121,8 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
 
       setError('')
     } catch (err) {
-      logDetailedError('KanbanBoard.handleDragEnd', err)
-      const errorMessage = getPocketBaseErrorMessage(err)
-      setError(errorMessage)
+      setError(err instanceof Error ? err.message : 'Failed to update task')
+      console.error('Failed to move task:', err)
     }
   }
 

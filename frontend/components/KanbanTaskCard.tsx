@@ -33,28 +33,28 @@ export default function KanbanTaskCard({ task, onClick }: KanbanTaskCardProps) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="bg-white rounded-lg shadow-sm border-l-4 p-4 cursor-move hover:shadow-md transition-shadow"
+      className="w-full bg-white rounded-lg shadow-sm border-l-4 p-4 cursor-move hover:shadow-md transition-shadow overflow-hidden"
       onClick={() => onClick?.(task)}
       style={{
         ...style,
         borderLeftColor: projectColor,
       }}
     >
-      <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2">
+      <h3 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-3 word-wrap break-words whitespace-normal">
         {task.title}
       </h3>
 
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 gap-2">
         {task.expand?.project && (
           <ProjectBadge project={task.expand.project} />
         )}
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-500 flex-shrink-0">
           #{task.id.slice(0, 8)}
         </span>
       </div>
 
       {task.description && (
-        <p className="text-xs text-gray-600 line-clamp-2 mb-3">
+        <p className="text-xs text-gray-600 line-clamp-2 mb-3 break-words whitespace-normal">
           {task.description}
         </p>
       )}
