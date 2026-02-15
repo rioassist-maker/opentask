@@ -1,4 +1,4 @@
-export type TaskStatus = 'todo' | 'in_progress' | 'done'
+export type TaskStatus = 'todo' | 'in_progress' | 'blocked' | 'done'
 
 export interface User {
   id: string
@@ -11,7 +11,9 @@ export interface User {
 export interface Project {
   id: string
   name: string
+  slug?: string
   description: string
+  color?: string  // Hex color code for the project
   created_by?: string
   created: string
   updated: string

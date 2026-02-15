@@ -99,6 +99,8 @@ export const getStatusColor = (status: TaskStatus): string => {
       return 'bg-gray-200 text-gray-800'
     case 'in_progress':
       return 'bg-blue-200 text-blue-800'
+    case 'blocked':
+      return 'bg-yellow-200 text-yellow-800'
     case 'done':
       return 'bg-green-200 text-green-800'
     default:
