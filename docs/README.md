@@ -109,6 +109,12 @@ El Dockerfile construye el frontend (Next.js static export) y lo copia a `pb_pub
 
 Todo el stack (frontend + backend) se despliega en **un solo servicio** en Railway.
 
+### Variables de entorno en Railway
+
+**No hace falta definir ninguna.** Railway inyecta `PORT` solo; el entrypoint usa `PORT` (por defecto 8080). El frontend usa la misma URL que la app para la API (mismo origen), así que no se necesita `NEXT_PUBLIC_POCKETBASE_URL` en producción.
+
+Opcional: si quisieras fijar el puerto a 8080, podés añadir `PORT=8080` en Variables (normalmente no hace falta).
+
 ### Pasos
 
 1. **Railway** → New Project → Deploy from GitHub → repo `opentask` (o tu fork).

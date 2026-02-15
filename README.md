@@ -10,13 +10,16 @@
 ## Quick start (local)
 
 ```bash
-# Terminal 1: PocketBase
+# Terminal 1: PocketBase (API en :8090)
 ./pocketbase serve
 
 # Terminal 2: Frontend
 cd frontend && npm run dev
 # http://localhost:3000
 ```
+
+Para que el frontend hable con PocketBase en local, crea `frontend/.env.local` con:
+`NEXT_PUBLIC_POCKETBASE_URL=http://localhost:8090`
 
 ## Verificar build
 
