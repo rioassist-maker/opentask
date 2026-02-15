@@ -18,10 +18,10 @@ function getPb(): PocketBase {
 // Proxy para que `pb.collection()`, `pb.authStore`, etc. sigan funcionando igual.
 export const pb = new Proxy({} as PocketBase, {
   get(_, prop) {
-    return (getPb() as Record<string | symbol, unknown>)[prop]
+    return (getPb() as unknown as Record<string | symbol, unknown>)[prop]
   },
   set(_, prop, value) {
-    ;(getPb() as Record<string | symbol, unknown>)[prop] = value
+    ;(getPb() as unknown as Record<string | symbol, unknown>)[prop] = value
     return true
   },
 })
