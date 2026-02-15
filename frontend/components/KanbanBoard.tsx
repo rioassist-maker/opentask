@@ -40,13 +40,10 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
   const [selectedProjectForSettings, setSelectedProjectForSettings] = useState<
     Project | undefined
   >()
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      distance: 8,
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -111,7 +108,6 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     if (!task || task.status === newStatus) return
 
     try {
-      setLoading(true)
       const updatedTask = await updateTask(taskId, { status: newStatus })
 
       setTasks(prevTasks =>
@@ -127,8 +123,6 @@ export default function KanbanBoard({ initialTasks }: KanbanBoardProps) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update task')
       console.error('Failed to move task:', err)
-    } finally {
-      setLoading(false)
     }
   }
 
