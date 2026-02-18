@@ -10,6 +10,9 @@ pb_data/
 pocketbase
 *.zip
 
+# Make dev (PocketBase PID)
+.pocketbase.pid
+
 # Logs
 *.log
 

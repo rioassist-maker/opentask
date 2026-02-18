@@ -3,7 +3,7 @@ import AuthForm from '@/components/AuthForm'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-red-500">
       <div className="max-w-md mx-auto pt-12 px-4">
         <div className="bg-white rounded-lg shadow p-8">
           <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">

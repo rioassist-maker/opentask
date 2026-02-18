@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { login, signup, getErrorMessage } from '@/lib/auth'
 
 interface AuthFormProps {
@@ -10,7 +9,6 @@ interface AuthFormProps {
 }
 
 export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
@@ -48,7 +46,9 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
       }
 
       onSuccess?.()
-      router.push('/dashboard')
+      // Full page navigation so dashboard loads with auth from localStorage and
+      // the correct view is shown (avoids client-side transition showing login).
+      window.location.href = '/dashboard'
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {

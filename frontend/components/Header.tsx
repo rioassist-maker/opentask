@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getCurrentUser, logout } from '@/lib/auth'
-import { initPocketBase } from '@/lib/pocketbase'
+import { initPocketBase, getPocketBase } from '@/lib/pocketbase'
 import { User } from '@/lib/types'
 
 interface HeaderProps {
@@ -23,8 +23,21 @@ export default function Header({ onLogout }: HeaderProps) {
 
   useEffect(() => {
     if (!mounted) return
-    // Only get current user after client-side mount
-    setUser(getCurrentUser())
+
+    const updateUser = () => setUser(getCurrentUser())
+
+    // Set user now (in case auth was already loaded)
+    updateUser()
+
+    // On refresh, auth can load from localStorage after first tick; subscribe so we update when it does
+    const pb = getPocketBase()
+    const unsub = pb.authStore.onChange(() => {
+      updateUser()
+    })
+
+    return () => {
+      unsub()
+    }
   }, [mounted])
 
   const handleLogout = () => {

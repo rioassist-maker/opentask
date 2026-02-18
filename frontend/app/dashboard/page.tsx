@@ -57,9 +57,17 @@ export default function DashboardPage() {
     loadTasks()
   }, [mounted, router])
 
-  // Show nothing until client-side hydration is complete
+  // Show loading shell so the route has content and replaces previous page (e.g. login).
+  // Returning null here caused "URL is /dashboard but login view still visible" in prod.
   if (!mounted) {
-    return null
+    return (
+      <div className="flex flex-col h-screen bg-red-100">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500 text-lg">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
